@@ -1,4 +1,4 @@
-(function(Namespace){
+((Namespace) => {
 
     class S2GShape {
         constructor(type, coordinates) {

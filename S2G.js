@@ -1,4 +1,4 @@
-var S2GNamespace = function (s) {
+var S2GNamespace = (s) => {
     var ns = typeof window !== "undefined" && window !== null ? window : self;
 
     var parts = s.split('.');
@@ -12,16 +12,16 @@ var S2GNamespace = function (s) {
 
 S2GNamespace('Autodesk.BIM360.Convert');
 
-(function (Namespace) {
+((Namespace) => {
 
     class S2G {
-        constructor(options) {
-            this.options = Object.assign({}, options);
+        constructor(options = {}) {
+            this.options = options;
             this.initialize();
         }
 
         initialize() {
-            this.x2js = new X2JS({stripWhitespaces : true});
+            this.x2js = new X2JS({ stripWhitespaces : true });
         }
 
         parseSvgText(svgText) {
@@ -40,7 +40,7 @@ S2GNamespace('Autodesk.BIM360.Convert');
             let svg_data = svg_object.svg;
             let svg_props = this._getSvgProps(svg_data);
 
-            Object.keys(svg_data).map(function(key, index) {
+            Object.keys(svg_data).map((key, index) => {
                 switch (key) {
                     case S2G.NodeTypes.Rectangle:
                     case S2G.NodeTypes.Ellipse:
@@ -51,7 +51,7 @@ S2GNamespace('Autodesk.BIM360.Convert');
                         featureList.push(feature);
                         break;
                 }
-            }.bind(this));
+            });
 
             return featureList;
         }
@@ -59,7 +59,7 @@ S2GNamespace('Autodesk.BIM360.Convert');
         _getSvgProps(svgData) {
             let svgProps = {};
             let svgMetadata = {};
-            Object.keys(svgData).map(function(key, index) {
+            Object.keys(svgData).map((key, index) => {
                 switch (key) {
                     case S2G.NodeTypes.Rectangle:
                     case S2G.NodeTypes.Ellipse:
@@ -68,7 +68,7 @@ S2GNamespace('Autodesk.BIM360.Convert');
                         // Ingore shape properties
                         break;
                     case S2G.NodeTypes.Metadata:
-                        svgMetadata = Object.assign({}, svgMetadata, svgData[key]);
+                        svgMetadata = Object.assign({}, svgData[key]);
                         break;
                     default:
                         let descriptor = Object.getOwnPropertyDescriptor(svgData, key);

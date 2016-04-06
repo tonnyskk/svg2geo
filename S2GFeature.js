@@ -1,10 +1,10 @@
-(function(Namespace){
+((Namespace) => {
 
     class S2GFeature {
-        constructor(properties) {
+        constructor(properties = {}) {
             this.type = 'Feature';
             this.geometry = {};
-            this.properties = Object.assign({}, properties);
+            this.properties = properties;
         }
 
         parse(type, shapeSvgData) {
@@ -40,7 +40,7 @@
             let svgNodeProps = Object.assign({}, svgData);
             delete svgNodeProps.metadata;
 
-            let svgNodeMetadata = Object.assign({}, svgData.metadata || {});;
+            let svgNodeMetadata = Object.assign({}, svgData.metadata || {});
 
             return { svgNodeProps, svgNodeMetadata };
         }

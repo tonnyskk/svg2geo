@@ -521,10 +521,12 @@ S2GNamespace('Autodesk.BIM360.Convert');
 
 (function (Namespace) {
 	var S2G = function () {
-		function S2G(options) {
+		function S2G() {
+			var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+
 			_classCallCheck(this, S2G);
 
-			this.options = Object.assign({}, options);
+			this.options = options;
 			this.initialize();
 		}
 
@@ -562,7 +564,7 @@ S2GNamespace('Autodesk.BIM360.Convert');
 							featureList.push(feature);
 							break;
 					}
-				}.bind(this));
+				});
 
 				return featureList;
 			}
@@ -580,7 +582,7 @@ S2GNamespace('Autodesk.BIM360.Convert');
 							// Ingore shape properties
 							break;
 						case S2G.NodeTypes.Metadata:
-							svgMetadata = Object.assign({}, svgMetadata, svgData[key]);
+							svgMetadata = Object.assign({}, svgData[key]);
 							break;
 						default:
 							var descriptor = Object.getOwnPropertyDescriptor(svgData, key);
@@ -606,6 +608,7 @@ S2GNamespace('Autodesk.BIM360.Convert');
 		Polyline: "path",
 		Metadata: "metadata"
 	};
+
 	Namespace.S2G = S2G;
 })(Autodesk.BIM360.Convert);
 ;(function (Namespace) {
@@ -631,10 +634,12 @@ S2GNamespace('Autodesk.BIM360.Convert');
 	var S2GRectangle = function (_Namespace$S2GShape) {
 		_inherits(S2GRectangle, _Namespace$S2GShape);
 
-		function S2GRectangle(coordinates) {
+		function S2GRectangle() {
+			var coordinates = arguments.length <= 0 || arguments[0] === undefined ? [] : arguments[0];
+
 			_classCallCheck(this, S2GRectangle);
 
-			return _possibleConstructorReturn(this, Object.getPrototypeOf(S2GRectangle).call(this, 'Polygon', coordinates || []));
+			return _possibleConstructorReturn(this, Object.getPrototypeOf(S2GRectangle).call(this, 'Polygon', coordinates));
 		}
 
 		_createClass(S2GRectangle, [{
@@ -644,7 +649,7 @@ S2GNamespace('Autodesk.BIM360.Convert');
 				var size = svgData.metadata.markup_element._size;
 
 				var positions = position.split(' ');
-				positions.forEach(function (value, index, array) {
+				positions.map(function (value, index, array) {
 					array[index] = parseFloat(value, 10);
 				});
 
@@ -677,12 +682,14 @@ S2GNamespace('Autodesk.BIM360.Convert');
 })(Autodesk.BIM360.Convert);
 ;(function (Namespace) {
 	var S2GFeature = function () {
-		function S2GFeature(properties) {
+		function S2GFeature() {
+			var properties = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+
 			_classCallCheck(this, S2GFeature);
 
 			this.type = 'Feature';
 			this.geometry = {};
-			this.properties = Object.assign({}, properties);
+			this.properties = properties;
 		}
 
 		_createClass(S2GFeature, [{
@@ -722,7 +729,7 @@ S2GNamespace('Autodesk.BIM360.Convert');
 				var svgNodeProps = Object.assign({}, svgData);
 				delete svgNodeProps.metadata;
 
-				var svgNodeMetadata = Object.assign({}, svgData.metadata || {});;
+				var svgNodeMetadata = Object.assign({}, svgData.metadata || {});
 
 				return { svgNodeProps: svgNodeProps, svgNodeMetadata: svgNodeMetadata };
 			}

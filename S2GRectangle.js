@@ -1,8 +1,8 @@
-(function(Namespace){
+((Namespace) => {
 
     class S2GRectangle extends Namespace.S2GShape {
-        constructor(coordinates){
-            super('Polygon', coordinates || []);
+        constructor(coordinates = []){
+            super('Polygon', coordinates);
         }
 
         parse(svgData) {
@@ -10,12 +10,12 @@
             let size = svgData.metadata.markup_element._size;
 
             let positions = position.split(' ');
-            positions.forEach(function(value, index, array) {
+            positions.map((value, index, array) => {
                 array[index] =  parseFloat(value, 10);
             });
 
             let sizes = size.split(' ')
-            sizes.map(function(value, index, array) {
+            sizes.map((value, index, array) => {
                 array[index] = parseFloat(value, 10);
             });
 
