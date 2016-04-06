@@ -6,7 +6,7 @@
       function test() {
         var svgXMlString = '<svg xmlns="http://www.w3.org/2000/svg" pointer-events="painted" version="1.1" baseProfile="full" style="position:absolute; left:0; top:0; transform:scale(1,-1); -ms-transform:scale(1,-1); -webkit-transform:scale(1,-1); -moz-transform:scale(1,-1); -o-transform:scale(1,-1); transformOrigin:0, 0; -ms-transformOrigin:0, 0; -webkit-transformOrigin:0, 0; -moz-transformOrigin:0, 0; -o-transformOrigin:0, 0; cursor:default; " width="1331" height="941" viewBox="-2840.5725806451615 -7273.466129032258 10650.146774193548 7529.517741935484"><metadata><markup_document xmlns="http://www.w3.org/1999/xhtml" data-model-version="1"></markup_document></metadata><rect pointer-events="inherit" transform="translate(1744.3516129032255,-2004.4040322580645) rotate(0) translate(-600.120967741935,-652.1314516129028) " stroke-width="32.00645161290413" stroke="rgba(255,0,0,1)" fill="none" width="1200.24193548387" height="1304.2629032258055"><metadata><markup_element xmlns="http://www.w3.org/1999/xhtml" stroke-width="32.00645161290413" stroke-color="#ff0000" stroke-opacity="1" fill-color="#ff0000" fill-opacity="0" type="rectangle" position="1744.3516129032255 -2004.4040322580645" size="1232.2483870967742 1336.2693548387097" rotation="0"></markup_element></metadata></rect></svg>';
 
-        var s2g = new S2G();
+        var s2g = new Autodesk.BIM360.Convert.S2G();
         var featureList = s2g.parseSvgText(svgXMlString);
         var featureJSON = JSON.stringify(featureList);
         document.getElementById('mapArea').innerHTML = featureJSON;

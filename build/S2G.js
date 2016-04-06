@@ -1,6 +1,16 @@
 "use strict";
 
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 /*
  Copyright 2011-2013 Abdulla Abdurakhmanov
@@ -495,99 +505,99 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			return VERSION;
 		};
 	};
-});(function () {
-	function S2GShape(type, coordinates) {
-		this.type = type;
-		this.coordinates = coordinates || [];
+});var S2GNamespace = function S2GNamespace(s) {
+	var ns = typeof window !== "undefined" && window !== null ? window : self;
+
+	var parts = s.split('.');
+	for (var i = 0; i < parts.length; ++i) {
+		ns[parts[i]] = ns[parts[i]] || {};
+		ns = ns[parts[i]];
 	}
 
-	var proto = S2GShape.prototype;
-	proto.parse = function (svgData) {};
-})();
-;(function () {
-	function S2GRectangle(coordinates) {
-		S2GShape.call(this, 'Polygon', coordinates);
-	}
+	return ns;
+};
 
-	var proto = S2GRectangle.prototype;
+S2GNamespace('Autodesk.BIM360.Convert');
 
-	proto.parse = function (svgData) {
-		var position = svgData.metadata.markup_element._position;
-		var size = svgData.metadata.markup_element._size;
+(function (Namespace) {
+	var S2G = function () {
+		function S2G(options) {
+			_classCallCheck(this, S2G);
 
-		var positions = position.split(' ');
-		var sizes = position.split(' ');
-
-		this.coordinates.push(this._generateCoordinates(positions, sizes));
-	};
-
-	proto._generateCoordinates = function (positions, sizes) {
-		var coordinates = [];
-
-		coordinates.push([positions[0], positions[1]]);
-		coordinates.push([positions[0] + sizes[0], positions[1]]);
-		coordinates.push([positions[0] + sizes[0], positions[1] - sizes[1]]);
-		coordinates.push([positions[0], positions[1] - sizes[1]]);
-		coordinates.push([positions[0], positions[1]]);
-
-		return coordinates;
-	};
-})();
-;(function () {
-	function S2GFeature(properties) {
-		this.type = 'Feature';
-		this.geometry = {};
-		this.properties = Object.assign({}, properties);
-	}
-
-	var proto = S2GFeature.prototype;
-
-	proto.parse = function (type, shapeSvgData) {
-		// Insert node props
-		var node_props = this._getNodeProps(shapeSvgData);
-		this.properties = Object.assign(this.properties, node_props);
-
-		var geo_shape = this._getShapeInstance(type);
-		if (geo_shape) {
-			geo_shape.parse(shapeSvgData);
-			this.geometry = geo_shape;
+			this.options = Object.assign({}, options);
+			this.initialize();
 		}
-	};
 
-	proto._getShapeInstance = function (type) {
-		switch (type) {
-			case S2G.NodeTypes.Rectangle:
-				return new S2GRectangle();
-			case S2G.NodeTypes.Ellipse:
-				console.warn('Unsupport shape: Ellipse');
-				return null;
-			case S2G.NodeTypes.Polygon:
-				console.warn('Unsupport shape: Polygon');
-				return null;
-			case S2G.NodeTypes.Polyline:
-				console.warn('Unsupport shape: Polyline');
-				return null;
-		}
-	};
-
-	proto._getNodeProps = function (svgData) {
-		var svgNodeProps = {};
-		var svgNodeMetadata = {};
-		Object.keys(svgData).map(function (key, index) {
-			if (key === S2G.NodeTypes.Metadata) {
-				svgNodeMetadata = Object.assign({}, svgNodeMetadata, svgData[key]);
-			} else {
-				svgNodeProps = Object.assign({}, svgNodeProps, svgData[key]);
+		_createClass(S2G, [{
+			key: "initialize",
+			value: function initialize() {
+				this.x2js = new X2JS({ stripWhitespaces: true });
 			}
-		});
-		return { svgNodeProps: svgNodeProps, svgNodeMetadata: svgNodeMetadata };
-	};
-})();
-;(function (root) {
-	function S2G(options) {
-		this.options = options || {};
-		this.initialize();
-	}
+		}, {
+			key: "parseSvgText",
+			value: function parseSvgText(svgText) {
+				var featureList = [];
+
+				if (!svgText) {
+					return featureList;
+				}
+
+				var svg_object = this.x2js.xml_str2json(svgText);
+				if (!svg_object || !svg_object.svg) {
+					console.warn('Invalid SVG text.');
+					return featureList;
+				}
+
+				var svg_data = svg_object.svg;
+				var svg_props = this._getSvgProps(svg_data);
+
+				Object.keys(svg_data).map(function (key, index) {
+					switch (key) {
+						case S2G.NodeTypes.Rectangle:
+						case S2G.NodeTypes.Ellipse:
+						case S2G.NodeTypes.Polygon:
+						case S2G.NodeTypes.Polyline:
+							var feature = new Namespace.S2GFeature(svg_props);
+							feature.parse(key, svg_data[key]);
+							featureList.push(feature);
+							break;
+					}
+				}.bind(this));
+
+				return featureList;
+			}
+		}, {
+			key: "_getSvgProps",
+			value: function _getSvgProps(svgData) {
+				var svgProps = {};
+				var svgMetadata = {};
+				Object.keys(svgData).map(function (key, index) {
+					switch (key) {
+						case S2G.NodeTypes.Rectangle:
+						case S2G.NodeTypes.Ellipse:
+						case S2G.NodeTypes.Polygon:
+						case S2G.NodeTypes.Polyline:
+							// Ingore shape properties
+							break;
+						case S2G.NodeTypes.Metadata:
+							svgMetadata = Object.assign({}, svgMetadata, svgData[key]);
+							break;
+						default:
+							var descriptor = Object.getOwnPropertyDescriptor(svgData, key);
+							Object.defineProperty(svgProps, key, descriptor);
+							break;
+					}
+				});
+
+				return { svgProps: svgProps, svgMetadata: svgMetadata };
+			}
+		}]);
+
+		return S2G;
+	}();
+
+	// Static attribute for S2G
+
 
 	S2G.NodeTypes = {
 		Rectangle: "rect",
@@ -596,69 +606,131 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		Polyline: "path",
 		Metadata: "metadata"
 	};
+	Namespace.S2G = S2G;
+})(Autodesk.BIM360.Convert);
+;(function (Namespace) {
+	var S2GShape = function () {
+		function S2GShape(type, coordinates) {
+			_classCallCheck(this, S2GShape);
 
-	var proto = S2G.prototype;
-
-	proto.initialize = function () {
-		this.x2js = new X2JS({ stripWhitespaces: true });
-	};
-
-	proto.parseSvgText = function (svgText) {
-		var featureList = [];
-
-		if (!svgText) {
-			return featureList;
+			this.type = type;
+			this.coordinates = [].concat(_toConsumableArray(coordinates));
 		}
 
-		var svg_object = this.x2js.xml_str2json(svgText);
-		if (!svg_object || !svg_object.svg) {
-			console.warn('Invalid SVG text.');
-			return featureList;
+		_createClass(S2GShape, [{
+			key: "parse",
+			value: function parse(svgData) {}
+		}]);
+
+		return S2GShape;
+	}();
+
+	Namespace.S2GShape = S2GShape;
+})(Autodesk.BIM360.Convert);
+;(function (Namespace) {
+	var S2GRectangle = function (_Namespace$S2GShape) {
+		_inherits(S2GRectangle, _Namespace$S2GShape);
+
+		function S2GRectangle(coordinates) {
+			_classCallCheck(this, S2GRectangle);
+
+			return _possibleConstructorReturn(this, Object.getPrototypeOf(S2GRectangle).call(this, 'Polygon', coordinates || []));
 		}
 
-		var svg_data = svg_object.svg;
-		var svg_props = this._getSvgProps(svg_data);
+		_createClass(S2GRectangle, [{
+			key: "parse",
+			value: function parse(svgData) {
+				var position = svgData.metadata.markup_element._position;
+				var size = svgData.metadata.markup_element._size;
 
-		Object.keys(svg_data).map(function (key, index) {
-			switch (key) {
-				case S2G.NodeTypes.Rectangle:
-				case S2G.NodeTypes.Ellipse:
-				case S2G.NodeTypes.Polygon:
-				case S2G.NodeTypes.Polyline:
-					var feature = new S2GFeature(svg_props);
-					feature.parse(key, svg_data[key]);
-					featureList.push(feature);
-					break;
+				var positions = position.split(' ');
+				positions.forEach(function (value, index, array) {
+					array[index] = parseFloat(value, 10);
+				});
+
+				var sizes = size.split(' ');
+				sizes.map(function (value, index, array) {
+					array[index] = parseFloat(value, 10);
+				});
+
+				this.coordinates.push(this._generateCoordinates(positions, sizes));
 			}
-		}.bind(this));
+		}, {
+			key: "_generateCoordinates",
+			value: function _generateCoordinates(positions, sizes) {
+				var coordinates = [];
 
-		return featureList;
-	};
+				coordinates.push([positions[0], positions[1]]);
+				coordinates.push([positions[0] + sizes[0], positions[1]]);
+				coordinates.push([positions[0] + sizes[0], positions[1] - sizes[1]]);
+				coordinates.push([positions[0], positions[1] - sizes[1]]);
+				coordinates.push([positions[0], positions[1]]);
 
-	proto._getSvgProps = function (svgData) {
-		var svgProps = {};
-		var svgMetadata = {};
-		Object.keys(svgData).map(function (key, index) {
-			switch (key) {
-				case S2G.NodeTypes.Rectangle:
-				case S2G.NodeTypes.Ellipse:
-				case S2G.NodeTypes.Polygon:
-				case S2G.NodeTypes.Polyline:
-					// Ingore shape properties
-					break;
-				case S2G.NodeTypes.Metadata:
-					svgMetadata = Object.assign({}, svgMetadata, svgData[key]);
-					break;
-				default:
-					svgProps = Object.assign({}, svgProps, svgData[key]);
-					break;
-
+				return coordinates;
 			}
-		});
+		}]);
 
-		return { svgProps: svgProps, svgMetadata: svgMetadata };
-	};
+		return S2GRectangle;
+	}(Namespace.S2GShape);
 
-	root.S2G = S2G;
-})(window || self);
+	Namespace.S2GRectangle = S2GRectangle;
+})(Autodesk.BIM360.Convert);
+;(function (Namespace) {
+	var S2GFeature = function () {
+		function S2GFeature(properties) {
+			_classCallCheck(this, S2GFeature);
+
+			this.type = 'Feature';
+			this.geometry = {};
+			this.properties = Object.assign({}, properties);
+		}
+
+		_createClass(S2GFeature, [{
+			key: "parse",
+			value: function parse(type, shapeSvgData) {
+				// Insert node props
+				var node_props = this._getNodeProps(shapeSvgData);
+				this.properties = Object.assign(this.properties, node_props);
+
+				var geo_shape = this._getShapeInstance(type);
+				if (geo_shape) {
+					geo_shape.parse(shapeSvgData);
+					this.geometry = geo_shape;
+				}
+			}
+		}, {
+			key: "_getShapeInstance",
+			value: function _getShapeInstance(type) {
+				switch (type) {
+					case Namespace.S2G.NodeTypes.Rectangle:
+						return new Namespace.S2GRectangle();
+					case Namespace.S2G.NodeTypes.Ellipse:
+						console.warn('Unsupport shape: Ellipse');
+						return null;
+					case Namespace.S2G.NodeTypes.Polygon:
+						console.warn('Unsupport shape: Polygon');
+						return null;
+					case Namespace.S2G.NodeTypes.Polyline:
+						console.warn('Unsupport shape: Polyline');
+						return null;
+				}
+			}
+		}, {
+			key: "_getNodeProps",
+			value: function _getNodeProps(svgData) {
+				var metadata = Namespace.S2G.NodeTypes.Metadata;
+				var svgNodeProps = Object.assign({}, svgData);
+				delete svgNodeProps.metadata;
+
+				var svgNodeMetadata = Object.assign({}, svgData.metadata || {});;
+
+				return { svgNodeProps: svgNodeProps, svgNodeMetadata: svgNodeMetadata };
+			}
+		}]);
+
+		return S2GFeature;
+	}();
+
+	Namespace.S2GFeature = S2GFeature;
+})(Autodesk.BIM360.Convert);
 //# sourceMappingURL=S2G.js.map

@@ -1,12 +1,15 @@
-(function(){
-    function S2GShape(type, coordinates){
-        this.type = type;
-        this.coordinates = coordinates || [];
+(function(Namespace){
+
+    class S2GShape {
+        constructor(type, coordinates) {
+            this.type = type;
+            this.coordinates = [...coordinates];
+        }
+
+        parse(svgData) {
+
+        }
     }
 
-    var proto = S2GShape.prototype;
-    proto.parse = function(svgData) {
-
-    };
-
-})();
+    Namespace.S2GShape = S2GShape;
+})(Autodesk.BIM360.Convert);

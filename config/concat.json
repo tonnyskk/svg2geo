@@ -5,10 +5,10 @@
     },
     "src": [
       "x2js/xml2json.js",
+      "S2G.js",
       "S2GShape.js",
       "S2GRectangle.js",
-      "S2GFeature.js",
-      "S2G.js"
+      "S2GFeature.js"
     ],
     "dest": "build/S2G.es6.js"
   }

@@ -1,3 +1,4 @@
-SVG2GEO
+svg2geo
 =======
-Convert svg data to geojson object
+
+Data converter between SVG and GeoJSON
