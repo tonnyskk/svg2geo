@@ -23,7 +23,7 @@
      } else {
          root.X2JS = factory();
      }
- }(window || self, function () {
+ }(this, function () {
 	return function (config) {
 		'use strict';
 
@@ -37,8 +37,10 @@
 			if(config.escapeMode === undefined) {
 				config.escapeMode = true;
 			}
-
-			config.attributePrefix = config.attributePrefix || "_";
+			if (config.attributePrefix === undefined || config.attributePrefix === null) {
+				config.attributePrefix = "";
+			}
+			// config.attributePrefix = config.attributePrefix || "_";
 			config.arrayAccessForm = config.arrayAccessForm || "none";
 			config.emptyNodeForm = config.emptyNodeForm || "text";
 

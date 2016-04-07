@@ -1,9 +1,0 @@
-{
-  "options": {
-  },
-  "s2g": {
-    "files": {
-      "build/S2G.min.js" : ["build/S2G.js"]
-    }
-  }
-}
