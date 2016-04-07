@@ -77,7 +77,7 @@ var Svg2Geo =
 
 	var _s2gFeature2 = _interopRequireDefault(_s2gFeature);
 
-	var _xml2json = __webpack_require__(5);
+	var _xml2json = __webpack_require__(7);
 
 	var _xml2json2 = _interopRequireDefault(_xml2json);
 
@@ -191,9 +191,15 @@ var Svg2Geo =
 
 	var _s2gRectangle2 = _interopRequireDefault(_s2gRectangle);
 
-	var _s2g = __webpack_require__(1);
+	var _s2gPolyline = __webpack_require__(5);
 
-	var _s2g2 = _interopRequireDefault(_s2g);
+	var _s2gPolyline2 = _interopRequireDefault(_s2gPolyline);
+
+	var _s2gPolygon = __webpack_require__(6);
+
+	var _s2gPolygon2 = _interopRequireDefault(_s2gPolygon);
+
+	var _s2g = __webpack_require__(1);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -212,12 +218,12 @@ var Svg2Geo =
 
 	    _createClass(S2GFeature, [{
 	        key: 'parse',
-	        value: function parse(type, shapeSvgData) {
+	        value: function parse(shape, shapeSvgData) {
 	            // Insert node props
 	            var node_props = this._getNodeProps(shapeSvgData);
 	            this.properties = Object.assign(this.properties, node_props);
 
-	            var geo_shape = this._getShapeInstance(type);
+	            var geo_shape = this._getShapeInstance(shape);
 	            if (geo_shape) {
 	                geo_shape.parse(shapeSvgData);
 	                this.geometry = geo_shape;
@@ -225,19 +231,17 @@ var Svg2Geo =
 	        }
 	    }, {
 	        key: '_getShapeInstance',
-	        value: function _getShapeInstance(type) {
-	            switch (type) {
+	        value: function _getShapeInstance(shape) {
+	            switch (shape) {
 	                case _s2g.NodeTypes.Rectangle:
 	                    return new _s2gRectangle2.default();
 	                case _s2g.NodeTypes.Ellipse:
 	                    console.warn('Unsupport shape: Ellipse');
 	                    return null;
 	                case _s2g.NodeTypes.Polygon:
-	                    console.warn('Unsupport shape: Polygon');
-	                    return null;
+	                    return new _s2gPolygon2.default();
 	                case _s2g.NodeTypes.Polyline:
-	                    console.warn('Unsupport shape: Polyline');
-	                    return null;
+	                    return new _s2gPolyline2.default();
 	            }
 	        }
 	    }, {
@@ -297,8 +301,8 @@ var Svg2Geo =
 	    _createClass(S2GRectangle, [{
 	        key: 'parse',
 	        value: function parse(svgData) {
-	            if (!svgData.metadata || !svgData.metadata.markup_element || !svgData.metadata.markup_element.position || !svgData.metadata.markup_element.size) {
-	                console.warn('Invalid Rectangle svg data!');
+	            var markupType = this.getMarupTypeFromSvgData(svgData);
+	            if (!markupType) {
 	                return;
 	            }
 
@@ -322,11 +326,11 @@ var Svg2Geo =
 	        value: function _generateCoordinates(positions, sizes) {
 	            var coordinates = [];
 
-	            coordinates.push([positions[0], positions[1]]);
-	            coordinates.push([positions[0] + sizes[0], positions[1]]);
-	            coordinates.push([positions[0] + sizes[0], positions[1] - sizes[1]]);
-	            coordinates.push([positions[0], positions[1] - sizes[1]]);
-	            coordinates.push([positions[0], positions[1]]);
+	            coordinates.push([positions[0] - sizes[0] / 2.0, positions[1] + sizes[1] / 2.0]); // left - top
+	            coordinates.push([positions[0] + sizes[0] / 2.0, positions[1] + sizes[1] / 2.0]); // right - top
+	            coordinates.push([positions[0] + sizes[0] / 2.0, positions[1] - sizes[1] / 2.0]); // right - bottom
+	            coordinates.push([positions[0] - sizes[0] / 2.0, positions[1] - sizes[1] / 2.0]); // left - bottom
+	            coordinates.push([positions[0] - sizes[0] / 2.0, positions[1] + sizes[1] / 2.0]); // First point
 
 	            return coordinates;
 	        }
@@ -365,6 +369,14 @@ var Svg2Geo =
 	    _createClass(S2GShape, [{
 	        key: "parse",
 	        value: function parse(svgData) {}
+	    }, {
+	        key: "getMarupTypeFromSvgData",
+	        value: function getMarupTypeFromSvgData(svgData) {
+	            if (svgData && svgData.metadata && svgData.metadata.markup_element) {
+	                return svgData.metadata.markup_element.type;
+	            }
+	            return null;
+	        }
 	    }]);
 
 	    return S2GShape;
@@ -375,6 +387,178 @@ var Svg2Geo =
 
 /***/ },
 /* 5 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _s2gShape = __webpack_require__(4);
+
+	var _s2gShape2 = _interopRequireDefault(_s2gShape);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var S2GPolyline = function (_S2GShape) {
+	    _inherits(S2GPolyline, _S2GShape);
+
+	    function S2GPolyline() {
+	        var coordinates = arguments.length <= 0 || arguments[0] === undefined ? [] : arguments[0];
+
+	        _classCallCheck(this, S2GPolyline);
+
+	        return _possibleConstructorReturn(this, Object.getPrototypeOf(S2GPolyline).call(this, 'LineString', coordinates));
+	    }
+
+	    _createClass(S2GPolyline, [{
+	        key: 'parse',
+	        value: function parse(svgData) {
+	            var path = svgData.d;
+	            if (!path || !path.startsWith('M ')) {
+	                console.warn('Invalid Path svg data!');
+	                return;
+	            }
+
+	            var markupType = this.getMarupTypeFromSvgData(svgData);
+	            if (markupType === 'freehand') {
+	                this._parseFreehandPath(path);
+	            } else if (markupType === 'cloud') {
+	                this._parseCloudPath(path);
+	            }
+	        }
+	    }, {
+	        key: '_parseFreehandPath',
+	        value: function _parseFreehandPath(path) {
+	            // ******************************************************************************** //
+	            // http://www.stoimen.com/blog/2011/02/11/from-svg-to-geo-coordinates-a-complete-guide/
+	            // >> M (absolute) m (relative) – moveto
+	            // >> L (absolute) l (relative) – lineto (x y)+
+	            // "M -120.02419354838707 128.02580645161288 L -112.02258064516104 128.02580645161288"
+	            // ******************************************************************************** //
+	            var pathDataArray = path.substring(2).split(' L ');
+
+	            pathDataArray.map(function (value, index, pArray) {
+	                var subArray = value.split(' ');
+
+	                subArray.map(function (value, index, sArray) {
+	                    sArray[index] = parseFloat(value, 10);
+	                });
+
+	                pArray[index] = subArray;
+	            });
+
+	            this.coordinates = [].concat(_toConsumableArray(pathDataArray));
+	        }
+	    }, {
+	        key: '_parseCloudPath',
+	        value: function _parseCloudPath(path) {
+	            // ******************************************************************************** //
+	            // http://www.stoimen.com/blog/2011/02/11/from-svg-to-geo-coordinates-a-complete-guide/
+	            // >> Z or z – closepath
+	            // Close the current subpath by drawing a straight line from the current point to current subpath’s initial point.
+	            // Since the Z and z commands take no parameters, they have an identical effect.
+	            //
+	            // >> C (absolute) c (relative) – curveto (x1 y1 x2 y2 x y)+
+	            // Draws a cubic Bézier curve from the current point to (x,y) using (x1,y1) as the control point
+	            // at the beginning of the curve and (x2,y2) as the control point at the end of the curve.
+	            // C (uppercase) indicates that absolute coordinates will follow; c (lowercase) indicates
+	            // that relative coordinates will follow. Multiple sets of coordinates may be specified to draw a polybézier.
+	            // At the end of the command, the new current point becomes the final (x,y) coordinate pair used in the polybézier.
+	            //
+	            // M 112.02258064516445,112.02258064516445
+	            // C 144.02903225806858,16.003225806452065 208.04193548387684,16.003225806452065 240.04838709678097,112.02258064516445
+	            // C 272.0548387096851,16.003225806452065 336.06774193549336,16.003225806452065 368.0741935483975,112.02258064516445 Z
+	            // ******************************************************************************** //
+
+	            console.warn('Unsupported shape now.');
+	        }
+	    }]);
+
+	    return S2GPolyline;
+	}(_s2gShape2.default);
+
+	exports.default = S2GPolyline;
+	;
+
+/***/ },
+/* 6 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _s2gShape = __webpack_require__(4);
+
+	var _s2gShape2 = _interopRequireDefault(_s2gShape);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var S2GPolygon = function (_S2GShape) {
+	    _inherits(S2GPolygon, _S2GShape);
+
+	    function S2GPolygon() {
+	        var coordinates = arguments.length <= 0 || arguments[0] === undefined ? [] : arguments[0];
+
+	        _classCallCheck(this, S2GPolygon);
+
+	        return _possibleConstructorReturn(this, Object.getPrototypeOf(S2GPolygon).call(this, 'Polygon', coordinates));
+	    }
+
+	    _createClass(S2GPolygon, [{
+	        key: 'parse',
+	        value: function parse(svgData) {
+	            var markupType = this.getMarupTypeFromSvgData(svgData);
+	            if (!markupType || markupType !== 'arrow') {
+	                return;
+	            }
+
+	            // points="0,16.003225806452065 1636.2440093676214,48.009677419356194 0,48.009677419356194"
+	            var pointPairs = svgData.points.split(' ');
+	            pointPairs.map(function (value, index, pArray) {
+	                var pointArray = value.split(',');
+
+	                pointArray.map(function (value, index, sArray) {
+	                    sArray[index] = parseFloat(value, 10);
+	                });
+
+	                pArray[index] = pointArray;
+	            });
+
+	            this.coordinates.push(pointPairs);
+	        }
+	    }]);
+
+	    return S2GPolygon;
+	}(_s2gShape2.default);
+
+	exports.default = S2GPolygon;
+	;
+
+/***/ },
+/* 7 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;"use strict";

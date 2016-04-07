@@ -5,6 +5,12 @@ export default class S2GShape {
     }
 
     parse(svgData) {
+    }
 
+    getMarupTypeFromSvgData(svgData) {
+        if (svgData && svgData.metadata && svgData.metadata.markup_element) {
+            return svgData.metadata.markup_element.type;
+        }
+        return null;
     }
 };

@@ -1,5 +1,7 @@
 import S2GRectangle from './s2g-rectangle';
-import S2G, { NodeTypes } from './s2g';
+import S2GPolyline from './s2g-polyline';
+import S2GPolygon from './s2g-polygon';
+import { NodeTypes } from './s2g';
 
 export default class S2GFeature {
     constructor(properties = {}) {
@@ -8,31 +10,29 @@ export default class S2GFeature {
         this.properties = properties;
     }
 
-    parse(type, shapeSvgData) {
+    parse(shape, shapeSvgData) {
         // Insert node props
         let node_props = this._getNodeProps(shapeSvgData);
         this.properties = Object.assign(this.properties, node_props);
 
-        let geo_shape = this._getShapeInstance(type);
+        let geo_shape = this._getShapeInstance(shape);
         if (geo_shape) {
             geo_shape.parse(shapeSvgData);
             this.geometry = geo_shape;
         }
     }
 
-    _getShapeInstance(type) {
-        switch (type) {
+    _getShapeInstance(shape) {
+        switch (shape) {
             case NodeTypes.Rectangle:
                 return new S2GRectangle();
             case NodeTypes.Ellipse:
                 console.warn('Unsupport shape: Ellipse');
                 return null;
             case NodeTypes.Polygon:
-                console.warn('Unsupport shape: Polygon');
-                return null;
+               return new S2GPolygon();
             case NodeTypes.Polyline:
-                console.warn('Unsupport shape: Polyline');
-                return null;
+               return new S2GPolyline();
         }
     }
 

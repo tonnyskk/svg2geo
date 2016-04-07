@@ -1,16 +1,15 @@
 import S2GShape from './s2g-shape';
 
 export default class S2GRectangle extends S2GShape {
-    constructor(coordinates = []){
+    constructor(coordinates = []) {
         super('Polygon', coordinates);
     }
 
     parse(svgData) {
-        if (!svgData.metadata
-            || !svgData.metadata.markup_element
-            || !svgData.metadata.markup_element.position
-            || !svgData.metadata.markup_element.size) {
-            console.warn('Invalid Rectangle svg data!');
+        let markupType = this.getMarupTypeFromSvgData(svgData);
+        if (!markupType) {
+            // TODO: Maybe rect for Text label
+
             return;
         }
 
@@ -33,12 +32,13 @@ export default class S2GRectangle extends S2GShape {
     _generateCoordinates(positions, sizes) {
         let coordinates = [];
 
-        coordinates.push([positions[0], positions[1]]);
-        coordinates.push([positions[0] + sizes[0], positions[1]]);
-        coordinates.push([positions[0] + sizes[0], positions[1] - sizes[1]]);
-        coordinates.push([positions[0], positions[1] - sizes[1]]);
-        coordinates.push([positions[0], positions[1]]);
+        coordinates.push([positions[0] - sizes[0] / 2.0, positions[1] + sizes[1] / 2.0]); // left - top
+        coordinates.push([positions[0] + sizes[0] / 2.0, positions[1] + sizes[1] / 2.0]); // right - top
+        coordinates.push([positions[0] + sizes[0] / 2.0, positions[1] - sizes[1] / 2.0]); // right - bottom
+        coordinates.push([positions[0] - sizes[0] / 2.0, positions[1] - sizes[1] / 2.0]); // left - bottom
+        coordinates.push([positions[0] - sizes[0] / 2.0, positions[1] + sizes[1] / 2.0]); // First point
 
         return coordinates;
     }
+
 };

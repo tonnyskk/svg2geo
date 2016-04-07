@@ -8,18 +8,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <script type="text/javascript">
         function test() {
-            var svgXMlString = '<svg xmlns="http://www.w3.org/2000/svg" pointer-events="painted" version="1.1" baseProfile="full" style="position:absolute; left:0; top:0; transform:scale(1,-1); -ms-transform:scale(1,-1); -webkit-transform:scale(1,-1); -moz-transform:scale(1,-1); -o-transform:scale(1,-1); transformOrigin:0, 0; -ms-transformOrigin:0, 0; -webkit-transformOrigin:0, 0; -moz-transformOrigin:0, 0; -o-transformOrigin:0, 0; cursor:default; " width="1331" height="941" viewBox="-2840.5725806451615 -7273.466129032258 10650.146774193548 7529.517741935484"><metadata><markup_document xmlns="http://www.w3.org/1999/xhtml" data-model-version="1"></markup_document></metadata><rect pointer-events="inherit" transform="translate(1744.3516129032255,-2004.4040322580645) rotate(0) translate(-600.120967741935,-652.1314516129028) " stroke-width="32.00645161290413" stroke="rgba(255,0,0,1)" fill="none" width="1200.24193548387" height="1304.2629032258055"><metadata><markup_element xmlns="http://www.w3.org/1999/xhtml" stroke-width="32.00645161290413" stroke-color="#ff0000" stroke-opacity="1" fill-color="#ff0000" fill-opacity="0" type="rectangle" position="1744.3516129032255 -2004.4040322580645" size="1232.2483870967742 1336.2693548387097" rotation="0"></markup_element></metadata></rect></svg>';
+            var svgXMlRect = '<svg xmlns="http://www.w3.org/2000/svg" pointer-events="painted" version="1.1" baseProfile="full" style="position:absolute; left:0; top:0; transform:scale(1,-1); -ms-transform:scale(1,-1); -webkit-transform:scale(1,-1); -moz-transform:scale(1,-1); -o-transform:scale(1,-1); transformOrigin:0, 0; -ms-transformOrigin:0, 0; -webkit-transformOrigin:0, 0; -moz-transformOrigin:0, 0; -o-transformOrigin:0, 0; cursor:default; " width="1331" height="941" viewBox="-2840.5725806451615 -7273.466129032258 10650.146774193548 7529.517741935484"><metadata><markup_document xmlns="http://www.w3.org/1999/xhtml" data-model-version="1"></markup_document></metadata><rect pointer-events="inherit" transform="translate(1744.3516129032255,-2004.4040322580645) rotate(0) translate(-600.120967741935,-652.1314516129028) " stroke-width="32.00645161290413" stroke="rgba(255,0,0,1)" fill="none" width="1200.24193548387" height="1304.2629032258055"><metadata><markup_element xmlns="http://www.w3.org/1999/xhtml" stroke-width="32.00645161290413" stroke-color="#ff0000" stroke-opacity="1" fill-color="#ff0000" fill-opacity="0" type="rectangle" position="1744.3516129032255 -2004.4040322580645" size="1232.2483870967742 1336.2693548387097" rotation="0"></markup_element></metadata></rect></svg>';
+
+            var svgXMLPath = '<svg xmlns="http://www.w3.org/2000/svg" pointer-events="painted" version="1.1" baseProfile="full" style="position:absolute; left:0; top:0; transform:scale(1,-1); -ms-transform:scale(1,-1); -webkit-transform:scale(1,-1); -moz-transform:scale(1,-1); -o-transform:scale(1,-1); transformOrigin:0, 0; -ms-transformOrigin:0, 0; -webkit-transformOrigin:0, 0; -moz-transformOrigin:0, 0; -o-transformOrigin:0, 0; cursor:default; " width="1331" height="941" viewBox="-2840.5725806451615 -7273.466129032258 10650.146774193548 7529.517741935484"><metadata><markup_document xmlns="http://www.w3.org/1999/xhtml" data-model-version="1"></markup_document></metadata><path pointer-events="inherit" transform="translate(1720.346774193548,-1688.3403225806455) rotate(0) scale(1,1) " stroke-width="32.00645161290413" stroke="rgba(255,0,0,0.75)" fill="none" opacity="rgba(255,0,0,0.75)" d="M -472.0951612903225 120.0241935483873 L -472.0951612903225 128.0258064516131 L -440.0887096774188 120.0241935483873 L -432.08709677419324 112.0225806451615 L -416.0838709677412 96.01935483870989 L -384.07741935483796 80.01612903225828 L -320.0645161290315 32.00645161290345 L -256.0516129032251 2.2737367544323206e-13 L -200.04032258064512 -16.003225806451383 L -104.02096774193546 -48.0096774193546 L 8.00161290322626 -80.01612903225782 L 64.01290322580712 -96.01935483870943 L 120.02419354838707 -104.02096774193524 L 224.04516129032322 -120.02419354838685 L 328.06612903225846 -128.02580645161288 L 360.0725806451617 -128.02580645161288 L 384.0774193548393 -128.02580645161288 L 416.08387096774254 -128.02580645161288 L 424.0854838709681 -128.02580645161288 L 432.0870967741937 -120.02419354838685 L 448.09032258064576 -96.01935483870943 L 456.09193548387134 -96.01935483870943 L 456.09193548387134 -80.01612903225782 L 472.0951612903225 -72.01451612903202 L 472.0951612903225 -64.01290322580621"><metadata><markup_element xmlns="http://www.w3.org/1999/xhtml" stroke-width="32.00645161290413" stroke-color="#ff0000" stroke-opacity="0.75" type="freehand" position="1720.346774193548 -1688.3403225806455" size="944.190322580645 256.051612903226" rotation="0" locations="-472.0951612903225 120.0241935483873 -472.0951612903225 128.0258064516131 -440.0887096774188 120.0241935483873 -432.08709677419324 112.0225806451615 -416.0838709677412 96.01935483870989 -384.07741935483796 80.01612903225828 -320.0645161290315 32.00645161290345 -256.0516129032251 2.2737367544323206e-13 -200.04032258064512 -16.003225806451383 -104.02096774193546 -48.0096774193546 8.00161290322626 -80.01612903225782 64.01290322580712 -96.01935483870943 120.02419354838707 -104.02096774193524 224.04516129032322 -120.02419354838685 328.06612903225846 -128.02580645161288 360.0725806451617 -128.02580645161288 384.0774193548393 -128.02580645161288 416.08387096774254 -128.02580645161288 424.0854838709681 -128.02580645161288 432.0870967741937 -120.02419354838685 448.09032258064576 -96.01935483870943 456.09193548387134 -96.01935483870943 456.09193548387134 -80.01612903225782 472.0951612903225 -72.01451612903202 472.0951612903225 -64.01290322580621"></markup_element></metadata></path></svg>';
+
+            var svgXMLArrow = '<svg xmlns="http://www.w3.org/2000/svg" pointer-events="painted" version="1.1" baseProfile="full" style="position:absolute; left:0; top:0; transform:scale(1,-1); -ms-transform:scale(1,-1); -webkit-transform:scale(1,-1); -moz-transform:scale(1,-1); -o-transform:scale(1,-1); transformOrigin:0, 0; -ms-transformOrigin:0, 0; -webkit-transformOrigin:0, 0; -moz-transformOrigin:0, 0; -o-transformOrigin:0, 0; cursor:default; " width="1331" height="941" viewBox="-2840.5725806451615 -7273.466129032258 10650.146774193548 7529.517741935484"><metadata><markup_document xmlns="http://www.w3.org/1999/xhtml" data-model-version="1"></markup_document></metadata><polygon pointer-events="inherit" points="0,16.003225806452065 620.1109022321959,16.003225806452065 620.1109022321959,0 658.5186441676809,32.00645161290413 620.1109022321959,64.01290322580826 620.1109022321959,48.009677419356194 0,48.009677419356194" transform="translate(1548.3120967741934,-1768.3564516129034) rotate(-27.49913873104716) translate(-329.25932208384046,-32.00645161290413) " fill="#ff0000" opacity="1"><metadata><markup_element xmlns="http://www.w3.org/1999/xhtml" stroke-width="32.00645161290413" stroke-color="#ff0000" stroke-opacity="1" type="arrow" head="1256.2532258064516 -1616.325806451613" tail="1840.3709677419351 -1920.3870967741937" rotation="0.4799505123194684"></markup_element></metadata></polygon></svg>';
 
             var s2g = new Svg2Geo.S2G();
-            var featureList = s2g.parseSvgText(svgXMlString);
-            var featureJSON = JSON.stringify(featureList);
-            document.getElementById('mapArea').innerHTML = featureJSON;
+            var featureRect = s2g.parseSvgText(svgXMlRect);
+            var featurePath = s2g.parseSvgText(svgXMLPath);
+            var featureArrow = s2g.parseSvgText(svgXMLArrow);
+
+            document.getElementById('mapAreaRect').innerHTML = JSON.stringify(featureRect);
+            document.getElementById('mapAreaPath').innerHTML = JSON.stringify(featurePath);
+            document.getElementById('mapAreaArrow').innerHTML = JSON.stringify(featureArrow);
+
         }
     </script>
   </head>
   <body>
     <button onclick="test()">Run Test</button>
-    <div id="mapArea"></div>
+    <br/>
+    <h2>Rect -> Polygon</h2>
+    <div id="mapAreaRect"> </div>
+
+    <br/>
+    <h2>Path -> Linestring</h2>
+    <div id="mapAreaPath"> </div>
+
+    <br/>
+    <h2>Arrow -> Polygon</h2>
+    <div id="mapAreaArrow"> </div>
+
     <script src="./dist/bundle.js"></script>
   </body>
 </html>
