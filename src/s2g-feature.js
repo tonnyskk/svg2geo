@@ -26,9 +26,6 @@ export default class S2GFeature {
         switch (shape) {
             case NodeTypes.Rectangle:
                 return new S2GRectangle();
-            case NodeTypes.Ellipse:
-                console.warn('Unsupport shape: Ellipse');
-                return null;
             case NodeTypes.Polygon:
                return new S2GPolygon();
             case NodeTypes.Polyline:
@@ -37,12 +34,17 @@ export default class S2GFeature {
     }
 
     _getNodeProps(svgData) {
-        let metadata = NodeTypes.Metadata;
+        let svgNodeProps = {};
+        let svgNodeMetadata = {};
 
-        let svgNodeProps = Object.assign({}, svgData);
-        delete svgNodeProps.metadata;
+        Object.keys(svgData).map((key, index) => {
+            if (key === NodeTypes.Metadata) {
+                Object.assign(svgNodeMetadata, svgData[key]);
+            } else if (svgData[key].constructor == String) {
+                Object.assign(svgNodeProps, { [key]: svgData[key] });
+            }
+        });
 
-        let svgNodeMetadata = Object.assign({}, svgData.metadata || {});
         return { svgNodeProps, svgNodeMetadata };
     }
 };

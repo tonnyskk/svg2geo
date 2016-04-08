@@ -83,12 +83,13 @@ var Svg2Geo =
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 	// Static attribute for S2G
 	var NodeTypes = exports.NodeTypes = {
 	    Rectangle: "rect",
-	    Ellipse: "ellipse",
 	    Polygon: "polygon",
 	    Polyline: "path",
 	    Metadata: "metadata"
@@ -130,7 +131,6 @@ var Svg2Geo =
 	            Object.keys(svg_data).map(function (key, index) {
 	                switch (key) {
 	                    case NodeTypes.Rectangle:
-	                    case NodeTypes.Ellipse:
 	                    case NodeTypes.Polygon:
 	                    case NodeTypes.Polyline:
 	                        var feature = new _s2gFeature2.default(svg_props);
@@ -148,20 +148,13 @@ var Svg2Geo =
 	            var svgProps = {};
 	            var svgMetadata = {};
 	            Object.keys(svgData).map(function (key, index) {
-	                switch (key) {
-	                    case NodeTypes.Rectangle:
-	                    case NodeTypes.Ellipse:
-	                    case NodeTypes.Polygon:
-	                    case NodeTypes.Polyline:
-	                        // Ingore shape properties
-	                        break;
-	                    case NodeTypes.Metadata:
-	                        svgMetadata = Object.assign({}, svgData[key]);
-	                        break;
-	                    default:
-	                        var descriptor = Object.getOwnPropertyDescriptor(svgData, key);
-	                        Object.defineProperty(svgProps, key, descriptor);
-	                        break;
+	                if (key === NodeTypes.Metadata) {
+	                    svgMetadata = Object.assign({}, svgData[key]);
+	                } else if (svgData[key].constructor == String) {
+	                    // let descriptor = Object.getOwnPropertyDescriptor(svgData, key);
+	                    // Object.defineProperty(svgProps, key, descriptor);
+	                    // svgProps[key] = svgData[key];
+	                    Object.assign(svgProps, _defineProperty({}, key, svgData[key]));
 	                }
 	            });
 
@@ -203,6 +196,8 @@ var Svg2Geo =
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 	var S2GFeature = function () {
@@ -235,9 +230,6 @@ var Svg2Geo =
 	            switch (shape) {
 	                case _s2g.NodeTypes.Rectangle:
 	                    return new _s2gRectangle2.default();
-	                case _s2g.NodeTypes.Ellipse:
-	                    console.warn('Unsupport shape: Ellipse');
-	                    return null;
 	                case _s2g.NodeTypes.Polygon:
 	                    return new _s2gPolygon2.default();
 	                case _s2g.NodeTypes.Polyline:
@@ -247,12 +239,17 @@ var Svg2Geo =
 	    }, {
 	        key: '_getNodeProps',
 	        value: function _getNodeProps(svgData) {
-	            var metadata = _s2g.NodeTypes.Metadata;
+	            var svgNodeProps = {};
+	            var svgNodeMetadata = {};
 
-	            var svgNodeProps = Object.assign({}, svgData);
-	            delete svgNodeProps.metadata;
+	            Object.keys(svgData).map(function (key, index) {
+	                if (key === _s2g.NodeTypes.Metadata) {
+	                    Object.assign(svgNodeMetadata, svgData[key]);
+	                } else if (svgData[key].constructor == String) {
+	                    Object.assign(svgNodeProps, _defineProperty({}, key, svgData[key]));
+	                }
+	            });
 
-	            var svgNodeMetadata = Object.assign({}, svgData.metadata || {});
 	            return { svgNodeProps: svgNodeProps, svgNodeMetadata: svgNodeMetadata };
 	        }
 	    }]);
@@ -303,6 +300,7 @@ var Svg2Geo =
 	        value: function parse(svgData) {
 	            var markupType = this.getMarupTypeFromSvgData(svgData);
 	            if (!markupType) {
+	                // Maybe rect for Text label
 	                return;
 	            }
 
@@ -326,6 +324,8 @@ var Svg2Geo =
 	        value: function _generateCoordinates(positions, sizes) {
 	            var coordinates = [];
 
+	            // For real code, we need consider the stroke width and remove it or keep it inside the rectangle area.
+	            // Following code is including the stroke border in the rectangle area.
 	            coordinates.push([positions[0] - sizes[0] / 2.0, positions[1] + sizes[1] / 2.0]); // left - top
 	            coordinates.push([positions[0] + sizes[0] / 2.0, positions[1] + sizes[1] / 2.0]); // right - top
 	            coordinates.push([positions[0] + sizes[0] / 2.0, positions[1] - sizes[1] / 2.0]); // right - bottom

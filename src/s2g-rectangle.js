@@ -8,8 +8,7 @@ export default class S2GRectangle extends S2GShape {
     parse(svgData) {
         let markupType = this.getMarupTypeFromSvgData(svgData);
         if (!markupType) {
-            // TODO: Maybe rect for Text label
-
+            // Maybe rect for Text label
             return;
         }
 
@@ -32,6 +31,8 @@ export default class S2GRectangle extends S2GShape {
     _generateCoordinates(positions, sizes) {
         let coordinates = [];
 
+        // For real code, we need consider the stroke width and remove it or keep it inside the rectangle area.
+        // Following code is including the stroke border in the rectangle area.
         coordinates.push([positions[0] - sizes[0] / 2.0, positions[1] + sizes[1] / 2.0]); // left - top
         coordinates.push([positions[0] + sizes[0] / 2.0, positions[1] + sizes[1] / 2.0]); // right - top
         coordinates.push([positions[0] + sizes[0] / 2.0, positions[1] - sizes[1] / 2.0]); // right - bottom

@@ -4,7 +4,6 @@ import X2JS from '../x2js/xml2json';
 // Static attribute for S2G
 export const NodeTypes = {
     Rectangle: "rect",
-    Ellipse: "ellipse",
     Polygon: "polygon",
     Polyline: "path",
     Metadata: "metadata"
@@ -39,7 +38,6 @@ export default class S2G {
         Object.keys(svg_data).map((key, index) => {
             switch (key) {
                 case NodeTypes.Rectangle:
-                case NodeTypes.Ellipse:
                 case NodeTypes.Polygon:
                 case NodeTypes.Polyline:
                     let feature = new S2GFeature(svg_props);
@@ -56,20 +54,13 @@ export default class S2G {
         let svgProps = {};
         let svgMetadata = {};
         Object.keys(svgData).map((key, index) => {
-            switch (key) {
-                case NodeTypes.Rectangle:
-                case NodeTypes.Ellipse:
-                case NodeTypes.Polygon:
-                case NodeTypes.Polyline:
-                    // Ingore shape properties
-                    break;
-                case NodeTypes.Metadata:
-                    svgMetadata = Object.assign({}, svgData[key]);
-                    break;
-                default:
-                    let descriptor = Object.getOwnPropertyDescriptor(svgData, key);
-                    Object.defineProperty(svgProps, key, descriptor);
-                    break;
+            if (key === NodeTypes.Metadata) {
+                svgMetadata = Object.assign({}, svgData[key]);
+            } else if (svgData[key].constructor == String) {
+                // let descriptor = Object.getOwnPropertyDescriptor(svgData, key);
+                // Object.defineProperty(svgProps, key, descriptor);
+                // svgProps[key] = svgData[key];
+                Object.assign(svgProps, { [key]: svgData[key] });
             }
         });
 
